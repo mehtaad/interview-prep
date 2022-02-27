@@ -1,0 +1,9 @@
+<span class="generic-wrap" draggable="false"><img {{bindAttr src="view.iconUri"}} class="app-icon" draggable="false" /></span>
+<a {{bindAttr href="view.href"}} {{bindAttr data-tip="view.content.app.name"}} class="app-icon-shine" draggable="false"></a>
+<h3 class="app-name" {{bindAttr data-tip="view.content.app.name"}}>{{view.content.app.name}}</h3>
+
+{{#if view.content.badge}}
+    <span class="app-badge">
+        {{view.content.badge}}
+    </span>
+{{/if}}

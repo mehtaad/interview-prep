@@ -1,0 +1,6 @@
+<ul {{bindAttr class=":apps-grid view.isDragging:dropzone"}}></ul>
+<ul {{bindAttr class=":apps-grid-targets view.isDragging:dropzone"}}></ul>
+
+{{#each fav in view.items}}
+    {{view Platform.Views.Favorite contentBinding="fav"}}
+{{/each}}

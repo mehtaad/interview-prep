@@ -1,0 +1,341 @@
+gAdd(this,a);
+}
+
+
+
+function STRING_ADD_RIGHT(a){
+var b=this;
+if(!(typeof(b)==='string')){
+if((%_ClassOf(b)==='String')&&%_IsStringWrapperSafeForDefaultValueOf(b)){
+b=%_ValueOf(b);
+}else{
+b=(typeof(b)==='number')
+?%_NumberToString(b)
+:%ToString(%ToPrimitive(b,0));
+}
+}
+return %_StringAdd(b,a);
+}
+
+
+
+function SUB(a){
+var b=(typeof(this)==='number')?this:%NonNumberToNumber(this);
+if(!(typeof(a)==='number'))a=%NonNumberToNumber(a);
+return %NumberSub(b,a);
+}
+
+
+
+function MUL(a){
+var b=(typeof(this)==='number')?this:%NonNumberToNumber(this);
+if(!(typeof(a)==='number'))a=%NonNumberToNumber(a);
+return %NumberMul(b,a);
+}
+
+
+
+function DIV(a){
+var b=(typeof(this)==='number')?this:%NonNumberToNumber(this);
+if(!(typeof(a)==='number'))a=%NonNumberToNumber(a);
+return %NumberDiv(b,a);
+}
+
+
+
+function MOD(a){
+var b=(typeof(this)==='number')?this:%NonNumberToNumber(this);
+if(!(typeof(a)==='number'))a=%NonNumberToNumber(a);
+return %NumberMod(b,a);
+}
+
+
+
+
+
+
+
+
+
+function BIT_OR(a){
+var b=(typeof(this)==='number')?this:%NonNumberToNumber(this);
+if(!(typeof(a)==='number'))a=%NonNumberToNumber(a);
+return %NumberOr(b,a);
+}
+
+
+
+function BIT_AND(a){
+var b;
+if((typeof(this)==='number')){
+b=this;
+if(!(typeof(a)==='number'))a=%NonNumberToNumber(a);
+}else{
+b=%NonNumberToNumber(this);
+
+
+
+
+if(!(typeof(a)==='number'))a=%NonNumberToNumber(a);
+
+
+
+if((!%_IsSmi(%IS_VAR(b))&&!(b==b)))return 0;
+}
+return %NumberAnd(b,a);
+}
+
+
+
+function BIT_XOR(a){
+var b=(typeof(this)==='number')?this:%NonNumberToNumber(this);
+if(!(typeof(a)==='number'))a=%NonNumberToNumber(a);
+return %NumberXor(b,a);
+}
+
+
+
+function UNARY_MINUS(){
+var a=(typeof(this)==='number')?this:%NonNumberToNumber(this);
+return %NumberUnaryMinus(a);
+}
+
+
+
+function BIT_NOT(){
+var a=(typeof(this)==='number')?this:%NonNumberToNumber(this);
+return %NumberNot(a);
+}
+
+
+
+function SHL(a){
+var b=(typeof(this)==='number')?this:%NonNumberToNumber(this);
+if(!(typeof(a)==='number'))a=%NonNumberToNumber(a);
+return %NumberShl(b,a);
+}
+
+
+
+function SAR(a){
+var b;
+if((typeof(this)==='number')){
+b=this;
+if(!(typeof(a)==='number'))a=%NonNumberToNumber(a);
+}else{
+b=%NonNumberToNumber(this);
+
+
+
+
+if(!(typeof(a)==='number'))a=%NonNumberToNumber(a);
+
+
+
+if((!%_IsSmi(%IS_VAR(b))&&!(b==b)))return 0;
+}
+return %NumberSar(b,a);
+}
+
+
+
+function SHR(a){
+var b=(typeof(this)==='number')?this:%NonNumberToNumber(this);
+if(!(typeof(a)==='number'))a=%NonNumberToNumber(a);
+return %NumberShr(b,a);
+}
+
+
+
+
+
+
+
+
+
+function DELETE(a,b){
+return %DeleteProperty(%ToObject(this),%ToString(a),b);
+}
+
+
+
+function IN(a){
+if(!(%_IsSpecObject(a))){
+throw %MakeTypeError('invalid_in_operator_use',[this,a]);
+}
+return %_IsNonNegativeSmi(this)?
+%HasElement(a,this):%HasProperty(a,%ToString(this));
+}
+
+
+
+
+
+
+function INSTANCE_OF(a){
+var b=this;
+if(!(%_ClassOf(a)==='Function')){
+throw %MakeTypeError('instanceof_function_expected',[b]);
+}
+
+
+if(!(%_IsSpecObject(b))){
+return 1;
+}
+
+
+
+var c=%BoundFunctionGetBindings(a);
+if(c){
+a=c[0];
+}
+
+var d=a.prototype;
+if(!(%_IsSpecObject(d))){
+throw %MakeTypeError('instanceof_nonobject_proto',[d]);
+}
+
+
+return %IsInPrototypeChain(d,b)?0:1;
+}
+
+
+
+
+
+function FILTER_KEY(a){
+var b=%ToString(a);
+if(%HasProperty(this,b))return b;
+return 0;
+}
+
+
+function CALL_NON_FUNCTION(){
+var a=%GetFunctionDelegate(this);
+if(!(%_IsFunction(a))){
+throw %MakeTypeError('called_non_callable',[typeof this]);
+}
+return %Apply(a,this,arguments,0,%_ArgumentsLength());
+}
+
+
+function CALL_NON_FUNCTION_AS_CONSTRUCTOR(){
+var a=%GetConstructorDelegate(this);
+if(!(%_IsFunction(a))){
+throw %MakeTypeError('called_non_callable',[typeof this]);
+}
+return %Apply(a,this,arguments,0,%_ArgumentsLength());
+}
+
+
+function CALL_FUNCTION_PROXY(){
+var a=%_ArgumentsLength()-1;
+var b=%_Arguments(a);
+var c=%GetCallTrap(b);
+return %Apply(c,this,arguments,0,a);
+}
+
+
+function CALL_FUNCTION_PROXY_AS_CONSTRUCTOR(){
+var a=this;
+var b=%GetConstructTrap(a);
+return %Apply(b,this,arguments,0,%_ArgumentsLength());
+}
+
+
+function APPLY_PREPARE(a){
+var b;
+
+
+
+if((%_IsArray(a))){
+b=a.length;
+if(%_IsSmi(b)&&b>=0&&b<0x800000&&
+(%_ClassOf(this)==='Function')){
+return b;
+}
+}
+
+b=(a==null)?0:%ToUint32(a.length);
+
+
+
+
+if(b>0x800000){
+throw %MakeRangeError('stack_overflow',[]);
+}
+
+if(!(%_ClassOf(this)==='Function')){
+throw %MakeTypeError('apply_non_function',
+[%ToString(this),typeof this]);
+}
+
+
+if(a!=null&&!(%_IsSpecObject(a))){
+throw %MakeTypeError('apply_wrong_args',[]);
+}
+
+
+
+return b;
+}
+
+
+function APPLY_OVERFLOW(a){
+throw %MakeRangeError('stack_overflow',[]);
+}
+
+
+
+function TO_OBJECT(){
+return %ToObject(this);
+}
+
+
+
+function TO_NUMBER(){
+return %ToNumber(this);
+}
+
+
+
+function TO_STRING(){
+return %ToString(this);
+}
+
+
+
+
+
+
+
+
+
+function ToPrimitive(a,b){
+
+if((typeof(a)==='string'))return a;
+
+if(!(%_IsSpecObject(a)))return a;
+if(b==0)b=((%_ClassOf(a)==='Date'))?2:1;
+return(b==1)?%DefaultNumber(a):%DefaultString(a);
+}
+
+
+
+function ToBoolean(a){
+if((typeof(a)==='boolean'))return a;
+if((typeof(a)==='string'))return a.length!=0;
+if(a==null)return false;
+if((typeof(a)==='number'))return!((a==0)||(!%_IsSmi(%IS_VAR(a))&&!(a==a)));
+return true;
+}
+
+
+
+function ToNumber(a){
+if((typeof(a)==='number'))return a;
+if((typeof(a)==='string')){
+return %_HasCachedArrayIndex(a)?%_GetCachedArrayIndex(a)
+:%StringToNumber(a);
+}
+if((typeof
